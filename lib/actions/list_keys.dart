@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:puppeteer/puppeteer.dart';
 import 'package:args/command_runner.dart' show Command;
 
@@ -30,6 +32,9 @@ class ListKeysCommand extends Command {
       );
 
       print("Title: $title");
+
+      stdin.lineMode = false;
+      stdin.readByteSync();
 
       // Gracefully close the browser's process
       await browser.close();

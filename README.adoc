@@ -1,5 +1,14 @@
 # Sailer_cli_dart 
+:toc:
 
 Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom SAILER 
 Remoteportal und stellt sie per MQTT zur Verfügung.
+
+## Benutzung
+
+In der Entwicklung startet man sailer_cli folgendermaßen:
+
+```bash
+  dart run bin/sailer_cli_dart.dart help
+```
 
