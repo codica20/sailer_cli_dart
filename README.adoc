@@ -1,0 +1,5 @@
+# Sailer_cli_dart 
+
+Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom SAILER 
+Remoteportal und stellt sie per MQTT zur Verfügung.
+
