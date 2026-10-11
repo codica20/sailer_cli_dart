@@ -1,6 +1,8 @@
 name: sailer_cli_dart
 description: Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom SAILER Remoteportal und stellt sie per MQTT zur Verfügung.
-version: 0.0.1
+# Please update version also in ./lib/app_info.dart
+version: 0.0.2
+
 # repository: https://github.com/my_org/my_repo
 
 environment:

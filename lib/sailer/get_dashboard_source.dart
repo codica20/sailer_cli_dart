@@ -53,8 +53,8 @@ Future<GetDashboardSourceReturn> getDashboardSource({
     );
   } catch (e) {
     print("Got exception in getDashboardSource: $e");
-//    print("Closing browser ...");
-//    await browser.close();
+    print("Closing browser ...");
+    await browser.close();
     rethrow;
   }
 }

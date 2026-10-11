@@ -10,5 +10,7 @@ In der Entwicklung startet man sailer_cli folgendermaßen:
 
 ```bash
   dart run bin/sailer_cli_dart.dart help
+  dart run bin/sailer_cli_dart.dart list-keys  --show-browser --filter Temperatur
+  dart run bin/sailer_cli_dart.dart get-params  --show-browser --filter Temperatur
 ```
 

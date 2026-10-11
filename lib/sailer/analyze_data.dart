@@ -1,3 +1,6 @@
+import 'package:sailer_cli_dart/sailer/sailer_model.dart';
+
+import '../util/jsoning.dart';
 import 'get_dashboard_source.dart' show VControllerData;
 
 List<String> sailerKeys(
@@ -9,6 +12,19 @@ List<String> sailerKeys(
     filterPattern,
   ).map((param) => sailerKey(param)).toList();
   return result..sort();
+}
+
+List<SailerValue> sailerValues(
+  VControllerData vControllerData,
+  String? filterPattern,
+) {
+  final result = orgParams(
+    vControllerData,
+    filterPattern,
+  ).map((param) => sailerValue(param)).toList();
+  return result..sort(
+    (valueA, valueB) => valueA.key.compareTo(valueB.key),
+  );
 }
 
 typedef VCDParamValue = dynamic;
@@ -46,4 +62,33 @@ String sailerKey(VCDParamValue paramValue) {
       ? "_$titleShort1"
       : "";
   return "$prefix${paramValue["title"]}$suffix";
+}
+
+/// extracts a SailerValue from a given param
+SailerValue sailerValue(VCDParamValue param) {
+  final key = sailerKey(param);
+  switch (param["parameter_type"]) {
+    case "bit":
+      {
+        final value = (param["value"] == "1");
+        return SailerBitValue(key, value);
+      }
+    case "variable":
+      final value = parsedNumberValue(param);
+      final unit = param["unit"];
+      return SailerVariableValue(key, value, unit);
+    default:
+      throw Exception(
+        "Parameter_type ${param["parameter_type"]} wird nicht unterstützt.\n${jsoning(param)}",
+      );
+  }
+}
+
+/// calculates value from factor and original value.
+///
+num parsedNumberValue(VCDParamValue param) {
+  final parsedFactor = double.parse(param["factor"]);
+  final parsedOrgValue = int.parse(param["value"]);
+  final result = parsedFactor * parsedOrgValue;
+  return result;
 }

@@ -1,3 +1,4 @@
 String appTitle = "sailer_cli_dart";
 
-String appVersion = "0.0.1";
+/// Update version also in pubspec.yaml
+String appVersion = "0.0.2";
