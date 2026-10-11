@@ -15,8 +15,6 @@ List<VCDParamValue> orgParams(
   final Map<String, VCDParamValue> paramMap =
       vControllerData["_parameter"];
   final result = paramMap.values.toList();
-  print("orgParams: ${result.runtimeType}");
-  //print("orgP res: $result");
   return result;
 }
 

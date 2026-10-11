@@ -19,6 +19,12 @@ class ListKeysCommand extends Command {
       defaultsTo: false,
       help: "Zeige Browser beim Herunterladen",
     );
+
+    argParser.addOption(
+      "filter",
+      valueHelp: "REGEX-Muster",
+      help: "filtert Wertenamen",
+    );
   }
 
   // [run] may also return a Future.
@@ -50,11 +56,22 @@ class ListKeysCommand extends Command {
             headless: headless,
           );
 
-
       List<String> sailerKeysList = sailerKeys(
         result.vControllerData,
       );
 
+      final String? filterPattern = argResults?.option(
+        "filter",
+      );
+      if (filterPattern != null) {
+        final RegExp re = RegExp(
+          filterPattern,
+          caseSensitive: false,
+        );
+        sailerKeysList = sailerKeysList.where(
+          (key) => re.hasMatch(key),
+        ).toList();
+      }
       print(
         JsonEncoder.withIndent("  ")
             .convert(sailerKeysList),
