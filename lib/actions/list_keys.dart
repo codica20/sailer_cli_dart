@@ -56,22 +56,14 @@ class ListKeysCommand extends Command {
             headless: headless,
           );
 
-      List<String> sailerKeysList = sailerKeys(
-        result.vControllerData,
-      );
-
       final String? filterPattern = argResults?.option(
         "filter",
       );
-      if (filterPattern != null) {
-        final RegExp re = RegExp(
-          filterPattern,
-          caseSensitive: false,
-        );
-        sailerKeysList = sailerKeysList.where(
-          (key) => re.hasMatch(key),
-        ).toList();
-      }
+      final List<String> sailerKeysList = sailerKeys(
+        result.vControllerData,
+        filterPattern,
+      );
+
       print(
         JsonEncoder.withIndent("  ")
             .convert(sailerKeysList),
