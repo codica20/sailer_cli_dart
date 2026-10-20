@@ -1,6 +1,8 @@
 import 'package:args/command_runner.dart';
 import 'package:sailer_cli_dart/actions/get_params.dart';
 import 'package:sailer_cli_dart/actions/list_keys.dart';
+import 'package:sailer_cli_dart/actions/pub_mqtt.dart';
+import 'package:sailer_cli_dart/actions/update_mqtt.dart';
 import 'package:sailer_cli_dart/actions/version_command.dart';
 
 CommandRunner sailerCmdRnr =
@@ -10,4 +12,6 @@ CommandRunner sailerCmdRnr =
       )
       ..addCommand(VersionCommand())
       ..addCommand(ListKeysCommand())
-      ..addCommand(GetParamsCommand());
+      ..addCommand(GetParamsCommand())
+      ..addCommand(UpdateMqttCommand())
+      ..addCommand(PublishMqttCommand());

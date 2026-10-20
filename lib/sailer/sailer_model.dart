@@ -32,4 +32,9 @@ class SailerVariableValue extends SailerValue {
     result["unit"] = unit;
     return result;
   }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

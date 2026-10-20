@@ -12,5 +12,6 @@ In der Entwicklung startet man sailer_cli folgendermaßen:
   dart run bin/sailer_cli_dart.dart help
   dart run bin/sailer_cli_dart.dart list-keys  --show-browser --filter Temperatur
   dart run bin/sailer_cli_dart.dart get-params  --show-browser --filter Temperatur
+  dart run bin/sailer_cli_dart.dart update-mqtt --filter '(F1: Kollektor|F3: Speicher|Raumtemperatur HK 1|UM1|Pumpe Heizkreis 1|nge_Kollektorpumpe|F11: Vorlauf Heizkreis 1|F6: Primärtemperatur 1|F17: Heizzone oben|F15: Aussentemperatur|F16: Brauchwasser Bereich 1|Durchschnittliche Aussentemp|Betriebszustände_Winter)'
 ```
 
