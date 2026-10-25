@@ -17,6 +17,8 @@ class MqttOptions({
   /// Sailer Device Name (as displayed in Home Assistant).
   /// Default: "SAILER"
   final String? sailerDeviceName,
+
+  final bool mqttLogging=false
 }) {
   Map<String, String?> toJson() {
     return <String, String?>{

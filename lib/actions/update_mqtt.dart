@@ -45,6 +45,13 @@ class UpdateMqttCommand extends Command {
       GetDashboardSourceReturn result =
           await getDashboardSource(sailerOptions);
 
+      result.browser.close().catchError((e, stackTrace) {
+        log.severe(
+          "Fehler beim Schließen des Browsers: $e",
+        );
+        log.severe("StackTrace: $stackTrace");
+      }); // do not wait for closing
+
       final String? filterPattern = argResults?.option(
         "filter",
       );
@@ -60,16 +67,26 @@ class UpdateMqttCommand extends Command {
       );
 
       final mqttOptions = sailerCliConfig.mqttOptions();
+      final mqttClient = await createMqttClient(
+        mqttOptions,
+      );
       for (final sVal in sailerValuesList) {
         log.info("Publishing $sVal...");
-        await publishMqttState(sVal, mqttOptions);
+        await publishMqttState(
+          sailerValue: sVal,
+          options: mqttOptions,
+          mqttClient: mqttClient,
+        );
       }
+
+      mqttClient.disconnect();
       //print("SailerKeys: $sailerKeysList");
       // print("vCont ${result.vControllerData}");
       //      print("Content: ${result.content}");
-      await result.browser.close();
     } catch (e, stackTrace) {
-      log.severe("FEHLER beim Auflisten der Wertenamen: $e");
+      log.severe(
+        "FEHLER in update-mqtt: $e",
+      );
       log.severe("Stacktrace: $stackTrace");
     }
   }

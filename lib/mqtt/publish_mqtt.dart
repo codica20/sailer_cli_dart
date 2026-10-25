@@ -12,18 +12,65 @@ import 'mqtt_model.dart' show MqttOptions;
 
 const origin = "sailer_cli_dart";
 
-Future<void> publishMqttState(
-  SailerValue sailerValue,
+Future<MqttServerClient> createMqttClient(
   MqttOptions options,
 ) async {
-  final log = Logger("publishMqttState");
-  log.fine("sailerValue: $sailerValue");
-  log.fine("options: $options");
-
+  final log = Logger("createMqttClient()");
   final String mqttHost = options.mqttServer;
   final int? mqttPort = options.mqttPort == null
       ? null
       : int.parse(options.mqttPort!);
+  final clientIdentifier = Platform.localHostname;
+
+  final client = MqttServerClient(
+    mqttHost,
+    clientIdentifier,
+  );
+  if (mqttPort != null) {
+    client.port = mqttPort;
+  }
+
+  client.onConnected = () {
+    log.info("CONNECTED");
+  };
+  client.onDisconnected = () {
+    log.info("DISCONNECTED");
+  };
+
+  client.logging(on: options.mqttLogging);
+
+  client.keepAlivePeriod = 60;
+
+  log.fine("Connecting to mqtt...");
+  try {
+    await client.connect();
+  } catch (e, stackTrace) {
+    log.severe("e: $e");
+
+    log.severe("stackTrace: $stackTrace");
+    rethrow;
+  }
+  log.info("Connected: ${client.connectionStatus?.state}");
+  return client;
+}
+
+/// publishes sailerValue to MQTT. It also publishes a
+/// discovery message.
+/// If a mqttClient is provided, it will be used
+/// (and not disconnected).
+Future<void> publishMqttState({
+  required SailerValue sailerValue,
+  required MqttOptions options,
+  MqttServerClient? mqttClient,
+}) async {
+  final log = Logger("publishMqttState");
+  log.fine("sailerValue: $sailerValue");
+  log.fine("options: $options");
+  log.fine("mqttClient: $mqttClient");
+
+  MqttClient client = (mqttClient == null)
+      ? await createMqttClient(options)
+      : mqttClient;
 
   //------------ publish mqtt discovery ----------------
   final mqttDiscoveryTopic = getMqttDiscoveryTopic(
@@ -43,8 +90,7 @@ Future<void> publishMqttState(
   );
 
   await publishMqttMessage(
-    mqttHost: mqttHost,
-    mqttPort: mqttPort,
+    mqttClient: client,
     mqttTopic: mqttDiscoveryTopic,
     mqttMessage: mqttDiscoveryMessage,
   );
@@ -59,57 +105,60 @@ Future<void> publishMqttState(
     options,
   );
   await publishMqttMessage(
-    mqttHost: mqttHost,
-    mqttPort: mqttPort,
+    mqttClient: client,
     mqttTopic: mqttTopic,
     mqttMessage: mqttMessage,
   );
-  //TODO: mqtt Discovery
+  if (mqttClient == null) {
+    client.disconnect();
+  }
 }
 
-/// low level function to publish to MQTT Host
+/// low level function to publish a message to MQTT Host
+/// using given MQTT-client. 
+/// Caller has to disconnect MQTT client.
 Future<void> publishMqttMessage({
+  required MqttClient mqttClient,
+  required String mqttTopic,
+  required String mqttMessage,
+}) async {
+  final log = Logger("publishMqttMessage()");
+
+  final msgBuilder = MqttPayloadBuilder();
+  msgBuilder.addUTF8String(mqttMessage);
+  log.fine(
+    jsoning({
+      "mqttTopic": mqttTopic,
+      "mqttMessage": mqttMessage,
+      "payload_len": msgBuilder.payload?.length,
+    }),
+  );
+  mqttClient.publishMessage(
+    mqttTopic,
+    .atMostOnce,
+    msgBuilder.payload!,
+  );
+}
+
+/// low level function to publish a single message to MQTT Host
+/// MQTT client connects and disconnects
+Future<void> publishSingleMqttMessage({
   required String mqttHost,
   int? mqttPort,
   required String mqttTopic,
   required String mqttMessage,
 }) async {
-  final log = Logger("publishMqttMessage()");
-  final clientIdentifier = Platform.localHostname;
-
-  final client = MqttServerClient(
-    mqttHost,
-    clientIdentifier,
+  final log = Logger("publishSingleMqttMessage()");
+  final client = await createMqttClient(
+    MqttOptions(
+      mqttServer: mqttHost,
+      mqttPort: mqttPort?.toString(),
+    ),
   );
-  if (mqttPort != null) {
-    client.port = mqttPort;
-  }
 
-  client.onConnected = () {
-    log.fine("CONNECTED");
-  };
-  client.onDisconnected = () {
-    log.fine("DISCONNECTED");
-  };
-
-  client.logging(on: true);
-  // final connectMessage = MqttConnectMessage()
-  //     .withClientIdentifier(clientIdentifier);
-  // client.connectionMessage = connectMessage;
-
-  log.fine("Connecting to mqtt...");
-  try {
-    await client.connect();
-  } catch (e, stackTrace) {
-    print("e: $e");
-
-    print("stackTrace: $stackTrace");
-    rethrow;
-  }
-  print("Connected: ${client.connectionStatus?.state}");
   final msgBuilder = MqttPayloadBuilder();
   msgBuilder.addUTF8String(mqttMessage);
-  print(
+  log.fine(
     jsoning({
       "mqttTopic": mqttTopic,
       "mqttMessage": mqttMessage,

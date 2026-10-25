@@ -49,7 +49,10 @@ class PublishMqttCommand extends Command {
       );
       print("Sailer-Test-Value: $sVal");
 
-      await publishMqttState(sVal, options);
+      await publishMqttState(
+        sailerValue: sVal,
+        options: options,
+      );
     } catch (e, stackTrace) {
       print("FEHLER beim Auflisten der Wertenamen: $e");
       print("Stacktrace: $stackTrace");
