@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:dotenv/dotenv.dart' show DotEnv;
 import 'package:args/command_runner.dart' show Command;
-import 'package:sailer_cli_dart/actions/env_keys.dart';
+import 'package:logging/logging.dart' show Logger;
 import 'package:sailer_cli_dart/sailer/get_dashboard_source.dart';
 
+import '../common/config.dart' show sailerCliConfig;
 import '../sailer/analyze_data.dart' show sailerKeys;
 
 class ListKeysCommand extends Command {
@@ -12,6 +12,8 @@ class ListKeysCommand extends Command {
   final name = "list-keys";
   @override
   final description = "Zeige Wertenamen von SAILER Master";
+
+  final log = Logger("ListKeysCommand");
 
   new() {
     argParser.addFlag(
@@ -30,31 +32,16 @@ class ListKeysCommand extends Command {
   // [run] may also return a Future.
   @override
   void run() async {
-    print("checke ...");
+    log.info("checke ...");
     try {
-      var env = DotEnv(includePlatformEnvironment: true)
-        ..load();
       bool headless =
           !(argResults?.flag("show-browser") ?? false);
-      String? sailerUser = env[sailerUserKey];
-      if (sailerUser == null) {
-        throw Exception("Bitte $sailerUserKey angeben!");
-      }
-      String? sailerPassword = env[sailerPasswordKey];
-      if (sailerPassword == null) {
-        throw Exception(
-          "Bitte $sailerPasswordKey angeben!",
-        );
-      }
-      String? sailerPortalUrl = env[sailerPortalUriKey];
+      final sailerOptions = sailerCliConfig.sailerOptions(
+        headless,
+      );
 
       GetDashboardSourceReturn result =
-          await getDashboardSource(
-            sailerUser: sailerUser,
-            sailerPassword: sailerPassword,
-            sailerPortalUrl: sailerPortalUrl,
-            headless: headless,
-          );
+          await getDashboardSource(sailerOptions);
 
       final String? filterPattern = argResults?.option(
         "filter",
@@ -73,8 +60,8 @@ class ListKeysCommand extends Command {
       //      print("Content: ${result.content}");
       await result.browser.close();
     } catch (e, stackTrace) {
-      print("FEHLER beim Auflisten der Wertenamen: $e");
-      print("Stacktrace: $stackTrace");
+      log.severe("FEHLER beim Auflisten der Wertenamen: $e");
+      log.severe("Stacktrace: $stackTrace");
     }
   }
 }

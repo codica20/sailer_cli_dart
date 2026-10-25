@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart' show Logger;
 import 'package:puppeteer/puppeteer.dart';
 
 class GetDashboardSourceReturn(
@@ -8,12 +9,23 @@ class GetDashboardSourceReturn(
 
 typedef VControllerData = Map<String, dynamic>;
 
-Future<GetDashboardSourceReturn> getDashboardSource({
-  required String sailerUser,
-  required String sailerPassword,
-  bool? headless,
-  String? sailerPortalUrl,
-}) async {
+class SailerOptions({
+  required final String sailerUser,
+  required final String sailerPassword,
+  final bool? headless,
+  final String? sailerPortalUrl,
+});
+final log = Logger("get_dashboard_source");
+
+Future<GetDashboardSourceReturn> getDashboardSource(
+  SailerOptions options,
+) async {
+  // Why does object matching not work?
+  final sailerUser = options.sailerUser;
+  final sailerPassword = options.sailerPassword;
+  final bool? headless = options.headless;
+  final sailerPortalUrl = options.sailerPortalUrl;
+
   Browser browser = await puppeteer.launch(
     headless: headless ?? false,
   );
@@ -52,8 +64,8 @@ Future<GetDashboardSourceReturn> getDashboardSource({
       browser,
     );
   } catch (e) {
-    print("Got exception in getDashboardSource: $e");
-    print("Closing browser ...");
+    log.severe("Got exception in getDashboardSource: $e");
+    log.info("Closing browser ...");
     await browser.close();
     rethrow;
   }
