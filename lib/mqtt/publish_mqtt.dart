@@ -115,7 +115,7 @@ Future<void> publishMqttState({
 }
 
 /// low level function to publish a message to MQTT Host
-/// using given MQTT-client. 
+/// using given MQTT-client.
 /// Caller has to disconnect MQTT client.
 Future<void> publishMqttMessage({
   required MqttClient mqttClient,
@@ -135,7 +135,7 @@ Future<void> publishMqttMessage({
   );
   mqttClient.publishMessage(
     mqttTopic,
-    .atMostOnce,
+    .atLeastOnce,
     msgBuilder.payload!,
   );
 }

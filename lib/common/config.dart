@@ -4,10 +4,14 @@ import 'package:sailer_cli_dart/sailer/get_dashboard_source.dart';
 import '../actions/env_keys.dart';
 import '../mqtt/mqtt_model.dart';
 
+const _dotenvQuiet = true;
+
 class SailerCliConfig {
   SailerOptions sailerOptions(bool? headless) {
-    var env = DotEnv(includePlatformEnvironment: true)
-      ..load();
+    var env = DotEnv(
+      includePlatformEnvironment: true,
+      quiet: _dotenvQuiet,
+    )..load();
     String? sailerUser = env[sailerUserKey];
     if (sailerUser == null) {
       throw Exception("Bitte $sailerUserKey angeben!");
@@ -27,8 +31,10 @@ class SailerCliConfig {
   }
 
   MqttOptions mqttOptions() {
-    var env = DotEnv(includePlatformEnvironment: true)
-      ..load();
+    var env = DotEnv(
+      includePlatformEnvironment: true,
+      quiet: _dotenvQuiet,
+    )..load();
     String? mqttServer = env[mqttServerKey];
     if (null == mqttServer) {
       throw Exception("Bitte $mqttServerKey angeben!");
