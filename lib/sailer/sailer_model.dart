@@ -15,6 +15,11 @@ class SailerBitValue extends SailerValue {
     result["value"] = value;
     return result;
   }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }
 
 class SailerVariableValue extends SailerValue {

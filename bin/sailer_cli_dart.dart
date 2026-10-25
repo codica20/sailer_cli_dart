@@ -1,10 +1,9 @@
 import 'package:logging/logging.dart' show Logger, Level;
 import 'package:sailer_cli_dart/actions/command_parser.dart';
 
-const String version = '0.0.1';
 
-void main(List<String> arguments) {
-  Logger.root.level = Level.INFO; // defaults to Level.INFO
+void main(List<String> arguments) async {
+  Logger.root.level = Level.FINE; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print(
       '${record.level.name}: ${record.time}: ${record.message}',
@@ -12,9 +11,10 @@ void main(List<String> arguments) {
   });
   final log = Logger("main()");
   try {
-    sailerCmdRnr.run(arguments);
-  } catch (e) {
+    await sailerCmdRnr.run(arguments);
+  } catch (e, stackTrace) {
     log.severe("FEHLER: $e");
+    log.severe("Stacktrace: $stackTrace");
     log.severe("$arguments");
     sailerCmdRnr.printUsage();
   }

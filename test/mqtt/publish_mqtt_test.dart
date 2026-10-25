@@ -11,4 +11,9 @@ void main() {
     final encoded = encodeChars(decoded);
     expect(encoded, "raumtemperatur_hk_1");
   });
+  test("encode Bärlauch", () {
+    const decoded = "Bärlauch";
+    final encoded = encodeChars(decoded);
+    expect(encoded, "baerlauch");
+  });
 }

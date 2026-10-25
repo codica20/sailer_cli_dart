@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:characters/characters.dart';
+import 'package:logging/logging.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:mqtt5_client/mqtt5_server_client.dart';
 import 'package:sailer_cli_dart/util/jsoning.dart';
@@ -15,8 +16,9 @@ Future<void> publishMqttState(
   SailerValue sailerValue,
   MqttOptions options,
 ) async {
-  print("sailerValue: $sailerValue");
-  print("options: $options");
+  final log = Logger("publishMqttState");
+  log.fine("sailerValue: $sailerValue");
+  log.fine("options: $options");
 
   final String mqttHost = options.mqttServer;
   final int? mqttPort = options.mqttPort == null
@@ -33,7 +35,7 @@ Future<void> publishMqttState(
     options,
   );
 
-  print(
+  log.fine(
     jsoning({
       "disc_topic": mqttDiscoveryTopic,
       "disc_message": mqttDiscoveryMessage,
@@ -72,6 +74,7 @@ Future<void> publishMqttMessage({
   required String mqttTopic,
   required String mqttMessage,
 }) async {
+  final log = Logger("publishMqttMessage()");
   final clientIdentifier = Platform.localHostname;
 
   final client = MqttServerClient(
@@ -83,18 +86,18 @@ Future<void> publishMqttMessage({
   }
 
   client.onConnected = () {
-    print("CONNECTED");
+    log.fine("CONNECTED");
   };
   client.onDisconnected = () {
-    print("DISCONNECTED");
+    log.fine("DISCONNECTED");
   };
 
-  client.logging(on: false);
+  client.logging(on: true);
   // final connectMessage = MqttConnectMessage()
   //     .withClientIdentifier(clientIdentifier);
   // client.connectionMessage = connectMessage;
 
-  print("Connecting to mqtt...");
+  log.fine("Connecting to mqtt...");
   try {
     await client.connect();
   } catch (e, stackTrace) {
