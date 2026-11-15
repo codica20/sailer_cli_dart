@@ -43,6 +43,7 @@ Siehe auch den Hilfetext:
 ```
 include::docs/helpmessage.ext[]
 ```
+Zu finden in link:docs/helpmessage.ext[].
 
 ## Entwicklung
 
