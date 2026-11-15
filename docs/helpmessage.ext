@@ -1,0 +1,15 @@
+Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom SAILER Remoteportal und stellt sie per MQTT zur Verfügung.
+
+Usage: sailer <command> [arguments]
+
+Global options:
+-h, --help    Print this usage information.
+
+Available commands:
+  get-params    Zeige Werte von SAILER Master
+  list-keys     Zeige Wertenamen von SAILER Master
+  pub-mqtt      Veröffentliche TEST-Wert auf MQTT
+  update-mqtt   Veröffentliche SAILER-Werte auf MQTT
+  version       Zeige Version.
+
+Run "sailer help <command>" for more information about a command.

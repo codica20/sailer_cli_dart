@@ -1,33 +1,47 @@
-# Sailer_cli_dart 
+# sailer_cli_dart 
+Übergibt Sensorwerte von SAILER-Remoteportal an MQTT
 :toc:
 
-Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom SAILER 
-Remoteportal und stellt sie per MQTT zur Verfügung.
+Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom https://www.sailergmbh.de/de/produkte/systemregler/remote-portal.html[SAILER 
+Remoteportal] und stellt sie per https://mqtt.org/[MQTT] zur Verfügung. MQTT stellt einen Standard dar,  den u.a. viele Smart Home-Systeme wie Home Assistant beherrschen. Für Home Assistant liefert
+sailer_cli_dart auch die https://www.home-assistant.io/integrations/mqtt/#discovery-messages["Discovery"-Messages],
+womit in Home Assistant die Sensorwerte ohne
+weitere Konfiguration zur Verfügung stehen.
+
+image:docs/process_overview.svg[]
+
+
+
 
 ## Benutzung
 
-  Bitte sailer_cli_dart aus `build/cli/linux_x64/bundle/bin` in den PATH einfügen.
+Bitte sailer_cli_dart aus `build/cli/linux_x64/bundle/bin` in den PATH einfügen.
 
-  In `.env` folgende Variablen setzen (oder als Umgebungsvariablen):
+In `.env` folgende Variablen setzen (oder als Umgebungsvariablen):
+
 ```bash
   SAILER_USER=sailer_portal_user
   SAILER_PASSWORD=sailer_password
 
-  HOME_ASSISTANT_TOKEN=homeassistant_token
-  HOME_ASSISTANT_URL=homeassistant_url_inkl_port
-
   MQTT_SERVER_HOST=mqtt_server
   #optional
   MQTT_PORT=mqtt_port;
-  #optional
-  MQTT_HA_DISCOVERY_PREFIX=mqtt_discovery_prefix
+  #optional (can be set in HomeAssistant UI)
+  MQTT_HA_DISCOVERY_PREFIX=homeassistant
 ```
+
+Dann kann salier_cli_dart genutzt werden:
 
 ```bash
   sailer_cli_dart help
   sailer_cli_dart list-keys  --show-browser --filter Temperatur
   sailer_cli_dart get-params  --show-browser --filter Temperatur
   sailer_cli_dart update-mqtt --filter '(F1: Kollektor|F3: Speicher|Raumtemperatur HK 1|UM1|Pumpe Heizkreis 1|nge_Kollektorpumpe|F11: Vorlauf Heizkreis 1|F6: Primärtemperatur 1|F17: Heizzone oben|F15: Aussentemperatur|F16: Brauchwasser Bereich 1|Durchschnittliche Aussentemp|Betriebszustände_Winter)'
+```
+
+Siehe auch den Hilfetext:
+```
+include::docs/helpmessage.ext[]
 ```
 
 ## Entwicklung
@@ -47,5 +61,13 @@ In der Entwicklung startet man sailer_cli folgendermaßen:
 ### Erstellen einer Produktiv-Version
 
 ```bash
+tools/createDocs.sh 
 dart build cli
 ```
+
+## Siehe auch
+
+* https://www.sailergmbh.de/de/produkte/systemregler/remote-portal.html[Remote-Portal von Sailer Ehingen]
+* https://www.home-assistant.io/[HomeAssistant]
+* https://www.home-assistant.io/integrations/mqtt/[HomeAssistant MQTT integration]
+* https://mosquitto.org/[Mosquitto], ein MQTT Broker
