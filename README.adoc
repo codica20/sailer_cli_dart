@@ -1,6 +1,8 @@
 # sailer_cli_dart 
 Übergibt Sensorwerte von SAILER-Remoteportal an MQTT
 :toc:
+:toc-title: Inhaltsverzeichnis
+:toclevels: 5
 
 Eine Neuimplementierung von sailer_cli mit Dart. Es holt Werte vom https://www.sailergmbh.de/de/produkte/systemregler/remote-portal.html[SAILER 
 Remoteportal] und stellt sie per https://mqtt.org/[MQTT] zur Verfügung. MQTT stellt einen Standard dar,  den u.a. viele Smart Home-Systeme wie Home Assistant beherrschen. Für Home Assistant liefert
